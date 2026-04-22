@@ -1,0 +1,14 @@
+{
+    "sqltools.connections": [
+        {
+            "name": "Lab Database",
+            "driver": "PostgreSQL",
+            "server": "localhost",
+            "port": 5432,
+            "database": "labdb",
+            "username": "coder",
+            "password": "coder",
+            "previewLimit": 50
+        }
+    ]
+}
