@@ -1,27 +1,39 @@
 const { shorten, resolve, isValidUrl } = require('./urlShortener');
 
-// Test URL validation
-console.log('=== URL Validation Tests ===');
-console.log('Valid HTTPS:', isValidUrl('https://example.com') ? 'PASS' : 'FAIL');
-console.log('Valid HTTP:', isValidUrl('http://example.com') ? 'PASS' : 'FAIL');
-console.log('Invalid (no protocol):', !isValidUrl('example.com') ? 'PASS' : 'FAIL');
-console.log('Invalid (ftp):', !isValidUrl('ftp://example.com') ? 'PASS' : 'FAIL');
-console.log('Invalid (empty):', !isValidUrl('') ? 'PASS' : 'FAIL');
-console.log('Invalid (random text):', !isValidUrl('not a url') ? 'PASS' : 'FAIL');
+let passed = 0;
+let failed = 0;
 
-// Test shortening
+function test(name, condition) {
+    if (condition) {
+        console.log('  PASS: ' + name);
+        passed++;
+    } else {
+        console.log('  FAIL: ' + name);
+        failed++;
+    }
+}
+
+console.log('=== URL Validation Tests ===');
+test('Valid HTTPS URL', isValidUrl('https://example.com'));
+test('Valid HTTP URL', isValidUrl('http://example.com'));
+test('Rejects missing protocol', !isValidUrl('example.com'));
+test('Rejects FTP protocol', !isValidUrl('ftp://example.com'));
+test('Rejects empty string', !isValidUrl(''));
+test('Rejects random text', !isValidUrl('not a url'));
+
 console.log('');
 console.log('=== Shortening Tests ===');
 const result = shorten('https://github.com');
-console.log('Valid URL shortens:', result.id ? 'PASS' : 'FAIL');
-console.log('Returns short URL:', result.shortUrl ? 'PASS' : 'FAIL');
-
+test('Valid URL returns ID', !!result.id);
+test('Valid URL returns short URL', !!result.shortUrl);
 const invalid = shorten('not-a-url');
-console.log('Invalid URL returns error:', invalid.error ? 'PASS' : 'FAIL');
+test('Invalid URL returns error', !!invalid.error);
 
-// Test resolving
 console.log('');
 console.log('=== Resolve Tests ===');
-const resolved = resolve(result.id);
-console.log('Resolves correctly:', resolved === 'https://github.com' ? 'PASS' : 'FAIL');
-console.log('Unknown ID returns null:', resolve('xyz123') === null ? 'PASS' : 'FAIL');
+test('Resolves to original URL', resolve(result.id) === 'https://github.com');
+test('Unknown ID returns null', resolve('xyz123') === null);
+
+console.log('');
+console.log('=== Results: ' + passed + ' passed, ' + failed + ' failed ===');
+process.exit(failed > 0 ? 1 : 0);
